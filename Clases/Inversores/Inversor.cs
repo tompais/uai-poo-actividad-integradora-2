@@ -1,8 +1,12 @@
-﻿namespace uai_poo_actividad_integradora_2.Clases.Inversores
+﻿using uai_poo_actividad_integradora_2.Clases.Inversiones;
+
+namespace uai_poo_actividad_integradora_2.Clases.Inversores
 {
     public class Inversor(uint legajo, string apellido, string nombre, uint dni) : IDisposable
     {
         public readonly uint Legajo = legajo;
+        public readonly List<Inversion> Inversiones = [];
+
         public string Nombre { get; set; } = nombre;
         public string Apellido { get; set; } = apellido;
         public uint DNI { get; set; } = dni;

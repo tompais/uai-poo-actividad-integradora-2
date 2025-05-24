@@ -1,4 +1,5 @@
 using uai_poo_actividad_integradora_2.Clases.Acciones;
+using uai_poo_actividad_integradora_2.Clases.Inversiones;
 using uai_poo_actividad_integradora_2.Clases.Inversores;
 using uai_poo_actividad_integradora_2.GUI.Formularios.Acciones.Agregar;
 using uai_poo_actividad_integradora_2.GUI.Formularios.Acciones.Modificar;
@@ -42,16 +43,57 @@ namespace uai_poo_actividad_integradora_2
                 var inversorAEliminar = ObtenerInversorSeleccionado();
                 if (inversorAEliminar != null)
                 {
+                    DevolverAccionesAlMercado(inversorAEliminar);
                     EliminarInversorDeLista(in inversorAEliminar);
                     EliminarInversorDeGrilla();
+                    ActualizarGrillaAcciones();
+                    ActualizarGrillaInversiones();
                     MessageBox.Show($"Inversor eliminado: {inversorAEliminar.Nombre} {inversorAEliminar.Apellido}", "Inversor Eliminado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
+        private void ActualizarGrillaInversiones()
+        {
+            if (EsListaDeInversoresVacia() || NoHaySeleccionEnGrillaInversores())
+            {
+                grillaInversiones.Rows.Clear();
+            }
+            else
+            {
+                var inversorSeleccionado = ObtenerInversorSeleccionado();
+                if (inversorSeleccionado != null)
+                {
+                    ActualizarGrillaInversiones(inversorSeleccionado);
+                }
+                else
+                {
+                    grillaInversiones.Rows.Clear();
+                }
+            }
+        }
+
+        private bool NoHaySeleccionEnGrillaInversores()
+        {
+            return grillaInversores.SelectedRows.Count == 0;
+        }
+
+        private bool EsListaDeInversoresVacia()
+        {
+            return Inversores.Count == 0;
+        }
+
+        private static void DevolverAccionesAlMercado(Inversor inversorAEliminar) => inversorAEliminar.Inversiones.ForEach(inversion => inversion.Accion.CantidadEmitida += inversion.Cantidad);
+
         private void EliminarInversorDeGrilla() => grillaInversores.Rows.Remove(ObtenerFilaSeleccionadaEnGrillaInversores());
 
         private void EliminarInversorDeLista(in Inversor inversorAEliminar) => Inversores.Remove(inversorAEliminar);
+
+        private void ActualizarGrillaAcciones()
+        {
+            grillaAcciones.Rows.Clear();
+            Acciones.ForEach(accion => AgregarAccionAGrilla(in accion));
+        }
 
         private Inversor? ObtenerInversorSeleccionado()
         {
@@ -63,7 +105,15 @@ namespace uai_poo_actividad_integradora_2
 
         private DataGridViewRow ObtenerFilaSeleccionadaEnGrillaInversores() => grillaInversores.SelectedRows[0];
 
-        private void GrillaInversores_SelectionChanged(object sender, EventArgs e) => botonModificarInversor.Enabled = botonEliminarInversor.Enabled = HayFilasSeleccionadasEnGrillaInversores();
+        private void GrillaInversores_SelectionChanged(object sender, EventArgs e)
+        {
+            ActualizarEstadoBotonesInversores();
+            ActualizarEstadoBotonComprarAccion();
+        }
+
+        private void ActualizarEstadoBotonComprarAccion() => botonComprarAccion.Enabled = HayFilasSeleccionadasEnGrillaInversores() && HayFilasSeleccionadasEnGrillaAcciones();
+
+        private void ActualizarEstadoBotonesInversores() => botonModificarInversor.Enabled = botonEliminarInversor.Enabled = HayFilasSeleccionadasEnGrillaInversores();
 
         private bool HayFilasSeleccionadasEnGrillaInversores() => grillaInversores.SelectedRows.Count > 0;
 
@@ -123,7 +173,13 @@ namespace uai_poo_actividad_integradora_2
 
         private void AgregarAccionALista(in Accion nuevaAccion) => Acciones.Add(nuevaAccion);
 
-        private void grillaAcciones_SelectionChanged(object sender, EventArgs e) => botonModificarAccion.Enabled = botonEliminarAccion.Enabled = HayFilasSeleccionadasEnGrillaAcciones();
+        private void GrillaAcciones_SelectionChanged(object sender, EventArgs e)
+        {
+            ActualizarEstadoBotonesAcciones();
+            ActualizarEstadoBotonComprarAccion();
+        }
+
+        private void ActualizarEstadoBotonesAcciones() => botonModificarAccion.Enabled = botonEliminarAccion.Enabled = HayFilasSeleccionadasEnGrillaAcciones();
 
         private bool HayFilasSeleccionadasEnGrillaAcciones() => grillaAcciones.SelectedRows.Count > 0;
 
@@ -201,5 +257,63 @@ namespace uai_poo_actividad_integradora_2
                 }
             }
         }
+
+        private void BotonComprarAccion_Click(object sender, EventArgs e)
+        {
+            if (HayFilasSeleccionadasEnGrillaInversores() && HayFilasSeleccionadasEnGrillaAcciones())
+            {
+                var inversorSeleccionado = ObtenerInversorSeleccionado();
+                var accionSeleccionada = ObtenerAccionSeleccionada();
+                if (inversorSeleccionado != null && accionSeleccionada != null)
+                {
+                    ReducirCantidadEmitida(in accionSeleccionada);
+                    AsignarInversionAInversor(in inversorSeleccionado, in accionSeleccionada);
+                    ModificarAccionEnGrilla();
+                    ActualizarGrillaInversiones(inversorSeleccionado);
+                    MessageBox.Show($"Compra realizada: {inversorSeleccionado.Nombre} {inversorSeleccionado.Apellido} compró {accionSeleccionada.Codigo}", "Compra Realizada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void ActualizarGrillaInversiones(Inversor inversor)
+        {
+            grillaInversiones.Rows.Clear();
+            inversor.Inversiones.ForEach(inversion =>
+            {
+                var accion = inversion.Accion;
+                grillaInversiones.Rows.Add(
+                    accion.Codigo,
+                    accion.Denominacion,
+                    accion.CotizacionActual,
+                    accion.CantidadEmitida,
+                    inversion.Cantidad,
+                    inversion.CalcularValorTotalDeLaInversion()
+                );
+            });
+        }
+
+        private static void AsignarInversionAInversor(in Inversor inversor, in Accion accion)
+        {
+            var codigoAccion = accion.Codigo;
+            if (EsInversionExistente(inversor, codigoAccion))
+            {
+                ObtenerInversionPorCodigoDeAccion(inversor, codigoAccion).Cantidad++;
+            }
+            else
+            {
+                AgregarNuevaInversion(inversor, accion);
+            }
+        }
+
+        private static void AgregarNuevaInversion(Inversor inversor, Accion accion)
+        {
+            inversor.Inversiones.Add(new Inversion(accion));
+        }
+
+        private static Inversion ObtenerInversionPorCodigoDeAccion(Inversor inversorSeleccionado, string codigoAccion) => inversorSeleccionado.Inversiones.First(inversion => inversion.Accion.Codigo == codigoAccion);
+
+        private static bool EsInversionExistente(Inversor inversorSeleccionado, string codigoAccion) => inversorSeleccionado.Inversiones.Any(inversion => inversion.Accion.Codigo == codigoAccion);
+
+        private static void ReducirCantidadEmitida(in Accion accionSeleccionada) => accionSeleccionada.CantidadEmitida--;
     }
 }

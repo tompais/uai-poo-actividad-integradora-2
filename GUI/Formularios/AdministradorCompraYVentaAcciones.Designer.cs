@@ -38,14 +38,14 @@
             botonEliminarInversor = new Button();
             botonModificarInversor = new Button();
             etiquetaInversores = new Label();
-            grillaAccionesDelInversor = new DataGridView();
+            grillaInversiones = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
             Column4 = new DataGridViewTextBoxColumn();
             Column5 = new DataGridViewTextBoxColumn();
             Column6 = new DataGridViewTextBoxColumn();
-            etiquetaAccionesDelInversor = new Label();
+            etiquetaInversiones = new Label();
             grillaAcciones = new DataGridView();
             Código = new DataGridViewTextBoxColumn();
             Denominación = new DataGridViewTextBoxColumn();
@@ -55,10 +55,10 @@
             botonModificarAccion = new Button();
             botonEliminarAccion = new Button();
             botonAgregarAccion = new Button();
-            comprarAccion = new Button();
+            botonComprarAccion = new Button();
             venderAccion = new Button();
             ((System.ComponentModel.ISupportInitialize)grillaInversores).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)grillaAccionesDelInversor).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)grillaInversiones).BeginInit();
             ((System.ComponentModel.ISupportInitialize)grillaAcciones).BeginInit();
             SuspendLayout();
             // 
@@ -148,17 +148,17 @@
             etiquetaInversores.TabIndex = 4;
             etiquetaInversores.Text = "Inversores";
             // 
-            // grillaAccionesDelInversor
+            // grillaInversiones
             // 
-            grillaAccionesDelInversor.AllowUserToAddRows = false;
-            grillaAccionesDelInversor.AllowUserToDeleteRows = false;
-            grillaAccionesDelInversor.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grillaAccionesDelInversor.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column6 });
-            grillaAccionesDelInversor.Location = new Point(12, 282);
-            grillaAccionesDelInversor.Name = "grillaAccionesDelInversor";
-            grillaAccionesDelInversor.ReadOnly = true;
-            grillaAccionesDelInversor.Size = new Size(646, 150);
-            grillaAccionesDelInversor.TabIndex = 5;
+            grillaInversiones.AllowUserToAddRows = false;
+            grillaInversiones.AllowUserToDeleteRows = false;
+            grillaInversiones.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            grillaInversiones.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column6 });
+            grillaInversiones.Location = new Point(12, 282);
+            grillaInversiones.Name = "grillaInversiones";
+            grillaInversiones.ReadOnly = true;
+            grillaInversiones.Size = new Size(646, 150);
+            grillaInversiones.TabIndex = 5;
             // 
             // Column1
             // 
@@ -196,14 +196,14 @@
             Column6.Name = "Column6";
             Column6.ReadOnly = true;
             // 
-            // etiquetaAccionesDelInversor
+            // etiquetaInversiones
             // 
-            etiquetaAccionesDelInversor.AutoSize = true;
-            etiquetaAccionesDelInversor.Location = new Point(12, 264);
-            etiquetaAccionesDelInversor.Name = "etiquetaAccionesDelInversor";
-            etiquetaAccionesDelInversor.Size = new Size(119, 15);
-            etiquetaAccionesDelInversor.TabIndex = 6;
-            etiquetaAccionesDelInversor.Text = "Acciones del Inversor";
+            etiquetaInversiones.AutoSize = true;
+            etiquetaInversiones.Location = new Point(12, 264);
+            etiquetaInversiones.Name = "etiquetaInversiones";
+            etiquetaInversiones.Size = new Size(66, 15);
+            etiquetaInversiones.TabIndex = 6;
+            etiquetaInversiones.Text = "Inversiones";
             // 
             // grillaAcciones
             // 
@@ -217,7 +217,7 @@
             grillaAcciones.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             grillaAcciones.Size = new Size(445, 150);
             grillaAcciones.TabIndex = 7;
-            grillaAcciones.SelectionChanged += grillaAcciones_SelectionChanged;
+            grillaAcciones.SelectionChanged += GrillaAcciones_SelectionChanged;
             // 
             // Código
             // 
@@ -284,14 +284,16 @@
             botonAgregarAccion.UseVisualStyleBackColor = true;
             botonAgregarAccion.Click += BotonAgregarAccion_Click;
             // 
-            // comprarAccion
+            // botonComprarAccion
             // 
-            comprarAccion.Location = new Point(664, 282);
-            comprarAccion.Name = "comprarAccion";
-            comprarAccion.Size = new Size(75, 23);
-            comprarAccion.TabIndex = 12;
-            comprarAccion.Text = "Comprar";
-            comprarAccion.UseVisualStyleBackColor = true;
+            botonComprarAccion.Enabled = false;
+            botonComprarAccion.Location = new Point(664, 282);
+            botonComprarAccion.Name = "botonComprarAccion";
+            botonComprarAccion.Size = new Size(75, 23);
+            botonComprarAccion.TabIndex = 12;
+            botonComprarAccion.Text = "Comprar";
+            botonComprarAccion.UseVisualStyleBackColor = true;
+            botonComprarAccion.Click += BotonComprarAccion_Click;
             // 
             // venderAccion
             // 
@@ -308,14 +310,14 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1298, 445);
             Controls.Add(venderAccion);
-            Controls.Add(comprarAccion);
+            Controls.Add(botonComprarAccion);
             Controls.Add(botonModificarAccion);
             Controls.Add(botonEliminarAccion);
             Controls.Add(botonAgregarAccion);
             Controls.Add(etiquetaAcciones);
             Controls.Add(grillaAcciones);
-            Controls.Add(etiquetaAccionesDelInversor);
-            Controls.Add(grillaAccionesDelInversor);
+            Controls.Add(etiquetaInversiones);
+            Controls.Add(grillaInversiones);
             Controls.Add(etiquetaInversores);
             Controls.Add(botonModificarInversor);
             Controls.Add(botonEliminarInversor);
@@ -324,7 +326,7 @@
             Name = "AdministradorCompraYVentaAcciones";
             Text = "Administrador de Compra y Venta de Acciones";
             ((System.ComponentModel.ISupportInitialize)grillaInversores).EndInit();
-            ((System.ComponentModel.ISupportInitialize)grillaAccionesDelInversor).EndInit();
+            ((System.ComponentModel.ISupportInitialize)grillaInversiones).EndInit();
             ((System.ComponentModel.ISupportInitialize)grillaAcciones).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -337,14 +339,14 @@
         private Button botonEliminarInversor;
         private Button botonModificarInversor;
         private Label etiquetaInversores;
-        private DataGridView grillaAccionesDelInversor;
+        private DataGridView grillaInversiones;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn Column3;
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column6;
-        private Label etiquetaAccionesDelInversor;
+        private Label etiquetaInversiones;
         private DataGridView grillaAcciones;
         private Label etiquetaAcciones;
         private DataGridViewTextBoxColumn Código;
@@ -354,7 +356,7 @@
         private Button botonModificarAccion;
         private Button botonEliminarAccion;
         private Button botonAgregarAccion;
-        private Button comprarAccion;
+        private Button botonComprarAccion;
         private Button venderAccion;
         private DataGridViewTextBoxColumn Legajo;
         private DataGridViewTextBoxColumn Apellido;
