@@ -190,12 +190,16 @@ namespace uai_poo_actividad_integradora_2
                 var accionAEliminar = ObtenerAccionSeleccionada();
                 if (accionAEliminar != null)
                 {
+                    RemoverInversionesAsociadas(accionAEliminar);
                     EliminarAccionDeLista(in accionAEliminar);
                     EliminarAccionDeGrilla();
+                    ActualizarGrillaInversiones();
                     MessageBox.Show($"Acción eliminada: {accionAEliminar.Codigo}", "Acción Eliminada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
+
+        private void RemoverInversionesAsociadas(Accion accion) => Inversores.ForEach(inversor => inversor.Inversiones.RemoveAll(inversion => inversion.Accion.Codigo == accion.Codigo));
 
         private void EliminarAccionDeGrilla()
         {
