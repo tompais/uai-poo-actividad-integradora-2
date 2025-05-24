@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace uai_poo_actividad_integradora_2.Clases.Inversores
+﻿namespace uai_poo_actividad_integradora_2.Clases.Inversores
 {
-    public class Inversor(string legajo, string nombre, string apellido, string dni) : IDisposable
+    public class Inversor(uint legajo, string apellido, string nombre, uint dni) : IDisposable
     {
-        public required string Legajo { get; set; } = legajo;
-        public required string Nombre { get; set; } = nombre;
-        public required string Apellido { get; set; } = apellido;
-        public required string DNI { get; set; } = dni;
+        public readonly uint Legajo = legajo;
+        public string Nombre { get; set; } = nombre;
+        public string Apellido { get; set; } = apellido;
+        public uint DNI { get; set; } = dni;
 
         ~Inversor()
         {
             Dispose();
+            MessageBox.Show($"Inversor {Nombre} {Apellido} eliminado", "Inversor Eliminado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
         }
+
+        public virtual TipoInversor ObtenerTipo() => TipoInversor.NORMAL;
     }
 }

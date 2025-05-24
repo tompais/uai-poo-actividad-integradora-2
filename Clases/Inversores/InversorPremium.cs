@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace uai_poo_actividad_integradora_2.Clases.Inversores
+﻿namespace uai_poo_actividad_integradora_2.Clases.Inversores
 {
-    public class InversorPremium(string legajo, string nombre, string apellido, string dni) : Inversor(legajo, nombre, apellido, dni)
+    public class InversorPremium(uint legajo, string nombre, string apellido, uint dni) : Inversor(legajo, nombre, apellido, dni)
     {
         ~InversorPremium()
         {
             Dispose();
+            MessageBox.Show($"Inversor {Nombre} {Apellido} eliminado", "Inversor Eliminado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        public override TipoInversor ObtenerTipo() => TipoInversor.PREMIUM;
     }
 }

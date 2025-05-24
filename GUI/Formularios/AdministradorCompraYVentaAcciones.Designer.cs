@@ -29,10 +29,6 @@
         private void InitializeComponent()
         {
             grillaInversores = new DataGridView();
-            Legajo = new DataGridViewTextBoxColumn();
-            Apellido = new DataGridViewTextBoxColumn();
-            Nombre = new DataGridViewTextBoxColumn();
-            DNI = new DataGridViewTextBoxColumn();
             botonAgregarInversor = new Button();
             botonEliminarInversor = new Button();
             botonModificarInversor = new Button();
@@ -46,16 +42,21 @@
             Column6 = new DataGridViewTextBoxColumn();
             etiquetaAccionesDelInversor = new Label();
             dataGridView1 = new DataGridView();
-            etiquetaAcciones = new Label();
             Código = new DataGridViewTextBoxColumn();
             Denominación = new DataGridViewTextBoxColumn();
             CotizaciónActual = new DataGridViewTextBoxColumn();
             CantidadEmitida = new DataGridViewTextBoxColumn();
+            etiquetaAcciones = new Label();
             botonModificarAccion = new Button();
             botonEliminarAccion = new Button();
             botonAgregarAccion = new Button();
             comprarAccion = new Button();
             venderAccion = new Button();
+            Legajo = new DataGridViewTextBoxColumn();
+            Apellido = new DataGridViewTextBoxColumn();
+            Nombre = new DataGridViewTextBoxColumn();
+            DNI = new DataGridViewTextBoxColumn();
+            Tipo = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)grillaInversores).BeginInit();
             ((System.ComponentModel.ISupportInitialize)grillaAccionesDelInversor).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -67,36 +68,14 @@
             grillaInversores.AllowUserToDeleteRows = false;
             grillaInversores.AllowUserToOrderColumns = true;
             grillaInversores.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grillaInversores.Columns.AddRange(new DataGridViewColumn[] { Legajo, Apellido, Nombre, DNI });
+            grillaInversores.Columns.AddRange(new DataGridViewColumn[] { Legajo, Apellido, Nombre, DNI, Tipo });
             grillaInversores.Location = new Point(12, 27);
             grillaInversores.Name = "grillaInversores";
             grillaInversores.ReadOnly = true;
-            grillaInversores.Size = new Size(447, 150);
+            grillaInversores.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grillaInversores.Size = new Size(545, 150);
             grillaInversores.TabIndex = 0;
-            // 
-            // Legajo
-            // 
-            Legajo.HeaderText = "Legajo";
-            Legajo.Name = "Legajo";
-            Legajo.ReadOnly = true;
-            // 
-            // Apellido
-            // 
-            Apellido.HeaderText = "Apellido";
-            Apellido.Name = "Apellido";
-            Apellido.ReadOnly = true;
-            // 
-            // Nombre
-            // 
-            Nombre.HeaderText = "Nombre";
-            Nombre.Name = "Nombre";
-            Nombre.ReadOnly = true;
-            // 
-            // DNI
-            // 
-            DNI.HeaderText = "DNI";
-            DNI.Name = "DNI";
-            DNI.ReadOnly = true;
+            grillaInversores.SelectionChanged += GrillaInversores_SelectionChanged;
             // 
             // botonAgregarInversor
             // 
@@ -106,24 +85,29 @@
             botonAgregarInversor.TabIndex = 1;
             botonAgregarInversor.Text = "Agregar";
             botonAgregarInversor.UseVisualStyleBackColor = true;
+            botonAgregarInversor.Click += BotonAgregarInversor_Click;
             // 
             // botonEliminarInversor
             // 
+            botonEliminarInversor.Enabled = false;
             botonEliminarInversor.Location = new Point(93, 183);
             botonEliminarInversor.Name = "botonEliminarInversor";
             botonEliminarInversor.Size = new Size(75, 23);
             botonEliminarInversor.TabIndex = 2;
             botonEliminarInversor.Text = "Eliminar";
             botonEliminarInversor.UseVisualStyleBackColor = true;
+            botonEliminarInversor.Click += BotonEliminarInversor_Click;
             // 
             // botonModificarInversor
             // 
+            botonModificarInversor.Enabled = false;
             botonModificarInversor.Location = new Point(174, 183);
             botonModificarInversor.Name = "botonModificarInversor";
             botonModificarInversor.Size = new Size(75, 23);
             botonModificarInversor.TabIndex = 3;
             botonModificarInversor.Text = "Modificar";
             botonModificarInversor.UseVisualStyleBackColor = true;
+            botonModificarInversor.Click += BotonModificarInversor_Click;
             // 
             // etiquetaInversores
             // 
@@ -197,20 +181,11 @@
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Código, Denominación, CotizaciónActual, CantidadEmitida });
-            dataGridView1.Location = new Point(493, 27);
+            dataGridView1.Location = new Point(594, 27);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.Size = new Size(445, 150);
             dataGridView1.TabIndex = 7;
-            // 
-            // etiquetaAcciones
-            // 
-            etiquetaAcciones.AutoSize = true;
-            etiquetaAcciones.Location = new Point(493, 9);
-            etiquetaAcciones.Name = "etiquetaAcciones";
-            etiquetaAcciones.Size = new Size(55, 15);
-            etiquetaAcciones.TabIndex = 8;
-            etiquetaAcciones.Text = "Acciones";
             // 
             // Código
             // 
@@ -236,9 +211,18 @@
             CantidadEmitida.Name = "CantidadEmitida";
             CantidadEmitida.ReadOnly = true;
             // 
+            // etiquetaAcciones
+            // 
+            etiquetaAcciones.AutoSize = true;
+            etiquetaAcciones.Location = new Point(594, 9);
+            etiquetaAcciones.Name = "etiquetaAcciones";
+            etiquetaAcciones.Size = new Size(55, 15);
+            etiquetaAcciones.TabIndex = 8;
+            etiquetaAcciones.Text = "Acciones";
+            // 
             // botonModificarAccion
             // 
-            botonModificarAccion.Location = new Point(655, 183);
+            botonModificarAccion.Location = new Point(756, 183);
             botonModificarAccion.Name = "botonModificarAccion";
             botonModificarAccion.Size = new Size(75, 23);
             botonModificarAccion.TabIndex = 11;
@@ -247,7 +231,7 @@
             // 
             // botonEliminarAccion
             // 
-            botonEliminarAccion.Location = new Point(574, 183);
+            botonEliminarAccion.Location = new Point(675, 183);
             botonEliminarAccion.Name = "botonEliminarAccion";
             botonEliminarAccion.Size = new Size(75, 23);
             botonEliminarAccion.TabIndex = 10;
@@ -256,7 +240,7 @@
             // 
             // botonAgregarAccion
             // 
-            botonAgregarAccion.Location = new Point(493, 183);
+            botonAgregarAccion.Location = new Point(594, 183);
             botonAgregarAccion.Name = "botonAgregarAccion";
             botonAgregarAccion.Size = new Size(75, 23);
             botonAgregarAccion.TabIndex = 9;
@@ -281,11 +265,41 @@
             venderAccion.Text = "Vender";
             venderAccion.UseVisualStyleBackColor = true;
             // 
+            // Legajo
+            // 
+            Legajo.HeaderText = "Legajo";
+            Legajo.Name = "Legajo";
+            Legajo.ReadOnly = true;
+            // 
+            // Apellido
+            // 
+            Apellido.HeaderText = "Apellido";
+            Apellido.Name = "Apellido";
+            Apellido.ReadOnly = true;
+            // 
+            // Nombre
+            // 
+            Nombre.HeaderText = "Nombre";
+            Nombre.Name = "Nombre";
+            Nombre.ReadOnly = true;
+            // 
+            // DNI
+            // 
+            DNI.HeaderText = "DNI";
+            DNI.Name = "DNI";
+            DNI.ReadOnly = true;
+            // 
+            // Tipo
+            // 
+            Tipo.HeaderText = "Tipo";
+            Tipo.Name = "Tipo";
+            Tipo.ReadOnly = true;
+            // 
             // AdministradorCompraYVentaAcciones
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(950, 445);
+            ClientSize = new Size(1298, 445);
             Controls.Add(venderAccion);
             Controls.Add(comprarAccion);
             Controls.Add(botonModificarAccion);
@@ -312,10 +326,6 @@
         #endregion
 
         private DataGridView grillaInversores;
-        private DataGridViewTextBoxColumn Legajo;
-        private DataGridViewTextBoxColumn Apellido;
-        private DataGridViewTextBoxColumn Nombre;
-        private DataGridViewTextBoxColumn DNI;
         private Button botonAgregarInversor;
         private Button botonEliminarInversor;
         private Button botonModificarInversor;
@@ -339,5 +349,10 @@
         private Button botonAgregarAccion;
         private Button comprarAccion;
         private Button venderAccion;
+        private DataGridViewTextBoxColumn Legajo;
+        private DataGridViewTextBoxColumn Apellido;
+        private DataGridViewTextBoxColumn Nombre;
+        private DataGridViewTextBoxColumn DNI;
+        private DataGridViewTextBoxColumn Tipo;
     }
 }
