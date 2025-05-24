@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace uai_poo_actividad_integradora_2.Clases.Acciones
+﻿namespace uai_poo_actividad_integradora_2.Clases.Acciones
 {
-    public class Accion(string codigo, string denominacion, string cotizacionActual, string cantidadEmitida) : IDisposable
+    public class Accion(string codigo, Denominacion denominacion, decimal cotizacionActual, uint cantidadEmitida) : IDisposable
     {
-        public required string Codigo { get; set; } = codigo;
-        public required string Denominacion { get; set; } = denominacion;
-        public required string CotizacionActual { get; set; } = cotizacionActual;
-        public required string CantidadEmitida { get; set; } = cantidadEmitida;
+        public readonly string Codigo = codigo;
+        public Denominacion Denominacion { get; set; } = denominacion;
+        public decimal CotizacionActual { get; set; } = cotizacionActual;
+        public uint CantidadEmitida { get; set; } = cantidadEmitida;
 
         ~Accion()
         {
@@ -21,8 +15,6 @@ namespace uai_poo_actividad_integradora_2.Clases.Acciones
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
         }
     }
 }

@@ -10,7 +10,6 @@
         ~Inversor()
         {
             Dispose();
-            MessageBox.Show($"Inversor {Nombre} {Apellido} eliminado", "Inversor Eliminado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public void Dispose()

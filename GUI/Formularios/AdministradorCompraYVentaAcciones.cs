@@ -1,12 +1,15 @@
+using uai_poo_actividad_integradora_2.Clases.Acciones;
 using uai_poo_actividad_integradora_2.Clases.Inversores;
+using uai_poo_actividad_integradora_2.GUI.Formularios.Acciones.Agregar;
+using uai_poo_actividad_integradora_2.GUI.Formularios.Acciones.Modificar;
 using uai_poo_actividad_integradora_2.GUI.Formularios.Inversores;
 
 namespace uai_poo_actividad_integradora_2
 {
-    // ([A-Z]{4})+-([0-9]{4})+-([A-Z]{1})([0-9]{1})([A-Z]{1})([0-9]{1})
     public partial class AdministradorCompraYVentaAcciones : Form
     {
         private readonly List<Inversor> Inversores = [];
+        private readonly List<Accion> Acciones = [];
         public AdministradorCompraYVentaAcciones()
         {
             InitializeComponent();
@@ -34,21 +37,21 @@ namespace uai_poo_actividad_integradora_2
 
         private void BotonEliminarInversor_Click(object sender, EventArgs e)
         {
-            if (HayFilasSeleccionadas())
+            if (HayFilasSeleccionadasEnGrillaInversores())
             {
                 var inversorAEliminar = ObtenerInversorSeleccionado();
                 if (inversorAEliminar != null)
                 {
-                    EliminarInversorDeLista(inversorAEliminar);
+                    EliminarInversorDeLista(in inversorAEliminar);
                     EliminarInversorDeGrilla();
                     MessageBox.Show($"Inversor eliminado: {inversorAEliminar.Nombre} {inversorAEliminar.Apellido}", "Inversor Eliminado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
-        private void EliminarInversorDeGrilla() => grillaInversores.Rows.Remove(ObtenerFilaSeleccionada());
+        private void EliminarInversorDeGrilla() => grillaInversores.Rows.Remove(ObtenerFilaSeleccionadaEnGrillaInversores());
 
-        private void EliminarInversorDeLista(Inversor inversorAEliminar) => Inversores.Remove(inversorAEliminar);
+        private void EliminarInversorDeLista(in Inversor inversorAEliminar) => Inversores.Remove(inversorAEliminar);
 
         private Inversor? ObtenerInversorSeleccionado()
         {
@@ -56,17 +59,17 @@ namespace uai_poo_actividad_integradora_2
             return Inversores.FirstOrDefault(i => i.Legajo == legajo);
         }
 
-        private uint ObtenerLegajoDeFilaSeleccionada() => (uint)ObtenerFilaSeleccionada().Cells[0].Value;
+        private uint ObtenerLegajoDeFilaSeleccionada() => (uint)ObtenerFilaSeleccionadaEnGrillaInversores().Cells[0].Value;
 
-        private DataGridViewRow ObtenerFilaSeleccionada() => grillaInversores.SelectedRows[0];
+        private DataGridViewRow ObtenerFilaSeleccionadaEnGrillaInversores() => grillaInversores.SelectedRows[0];
 
-        private void GrillaInversores_SelectionChanged(object sender, EventArgs e) => botonModificarInversor.Enabled = botonEliminarInversor.Enabled = HayFilasSeleccionadas();
+        private void GrillaInversores_SelectionChanged(object sender, EventArgs e) => botonModificarInversor.Enabled = botonEliminarInversor.Enabled = HayFilasSeleccionadasEnGrillaInversores();
 
-        private bool HayFilasSeleccionadas() => grillaInversores.SelectedRows.Count > 0;
+        private bool HayFilasSeleccionadasEnGrillaInversores() => grillaInversores.SelectedRows.Count > 0;
 
         private void BotonModificarInversor_Click(object sender, EventArgs e)
         {
-            if (HayFilasSeleccionadas())
+            if (HayFilasSeleccionadasEnGrillaInversores())
             {
                 var inversorAModificar = ObtenerInversorSeleccionado();
                 if (inversorAModificar != null)
@@ -94,12 +97,109 @@ namespace uai_poo_actividad_integradora_2
 
         private void ModificarInversorEnGrilla(in Inversor inversor)
         {
-            var filaSeleccionada = ObtenerFilaSeleccionada();
+            var filaSeleccionada = ObtenerFilaSeleccionadaEnGrillaInversores();
             filaSeleccionada.Cells[0].Value = inversor.Legajo;
             filaSeleccionada.Cells[1].Value = inversor.Apellido;
             filaSeleccionada.Cells[2].Value = inversor.Nombre;
             filaSeleccionada.Cells[3].Value = inversor.DNI;
             filaSeleccionada.Cells[4].Value = inversor.ObtenerTipo();
+        }
+
+        private void BotonAgregarAccion_Click(object sender, EventArgs e)
+        {
+            var formularioAgregarAccion = new FormularioAgregarAccion(ObtenerCodigosAccionesExistentes());
+            if (formularioAgregarAccion.ShowDialog() == DialogResult.OK)
+            {
+                var nuevaAccion = formularioAgregarAccion.Accion;
+                AgregarAccionALista(in nuevaAccion);
+                AgregarAccionAGrilla(in nuevaAccion);
+                MessageBox.Show($"Acción agregada: {nuevaAccion.Codigo}", "Acción Agregada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private List<string> ObtenerCodigosAccionesExistentes() => [.. Acciones.Select(a => a.Codigo)];
+
+        private void AgregarAccionAGrilla(in Accion nuevaAccion) => grillaAcciones.Rows.Add(nuevaAccion.Codigo, nuevaAccion.Denominacion, nuevaAccion.CotizacionActual, nuevaAccion.CantidadEmitida);
+
+        private void AgregarAccionALista(in Accion nuevaAccion) => Acciones.Add(nuevaAccion);
+
+        private void grillaAcciones_SelectionChanged(object sender, EventArgs e) => botonModificarAccion.Enabled = botonEliminarAccion.Enabled = HayFilasSeleccionadasEnGrillaAcciones();
+
+        private bool HayFilasSeleccionadasEnGrillaAcciones() => grillaAcciones.SelectedRows.Count > 0;
+
+        private void BotonEliminarAccion_Click(object sender, EventArgs e)
+        {
+            if (HayFilasSeleccionadasEnGrillaAcciones())
+            {
+                var accionAEliminar = ObtenerAccionSeleccionada();
+                if (accionAEliminar != null)
+                {
+                    EliminarAccionDeLista(in accionAEliminar);
+                    EliminarAccionDeGrilla();
+                    MessageBox.Show($"Acción eliminada: {accionAEliminar.Codigo}", "Acción Eliminada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void EliminarAccionDeGrilla()
+        {
+            var filaSeleccionada = ObtenerFilaSeleccionadaEnGrillaAcciones();
+            if (filaSeleccionada != null)
+            {
+                grillaAcciones.Rows.Remove(filaSeleccionada);
+            }
+        }
+
+        private void EliminarAccionDeLista(in Accion accionAEliminar)
+        {
+            var indice = Acciones.IndexOf(accionAEliminar);
+            if (indice != -1)
+            {
+                Acciones.RemoveAt(indice);
+            }
+        }
+
+        private Accion? ObtenerAccionSeleccionada()
+        {
+            var codigo = ObtenerCodigoDeFilaSeleccionada();
+            return Acciones.FirstOrDefault(a => a.Codigo == codigo);
+        }
+
+        private string ObtenerCodigoDeFilaSeleccionada() => ObtenerFilaSeleccionadaEnGrillaAcciones().Cells[0].Value.ToString()!;
+
+        private DataGridViewRow ObtenerFilaSeleccionadaEnGrillaAcciones() => grillaAcciones.SelectedRows[0];
+
+        private void BotonModificarAccion_Click(object sender, EventArgs e)
+        {
+            if (HayFilasSeleccionadasEnGrillaAcciones())
+            {
+                var accionAModificar = ObtenerAccionSeleccionada();
+                if (accionAModificar != null)
+                {
+                    var formularioModificarAccion = new FormularioModificarAccion(in accionAModificar);
+                    if (formularioModificarAccion.ShowDialog() == DialogResult.OK)
+                    {
+                        ModificarAccionEnGrilla();
+                        MessageBox.Show($"Acción modificada: {accionAModificar.Codigo}", "Acción Modificada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
+        private void ModificarAccionEnGrilla()
+        {
+            var filaSeleccionada = ObtenerFilaSeleccionadaEnGrillaAcciones();
+            if (filaSeleccionada != null)
+            {
+                var accionModificada = ObtenerAccionSeleccionada();
+                if (accionModificada != null)
+                {
+                    filaSeleccionada.Cells[0].Value = accionModificada.Codigo;
+                    filaSeleccionada.Cells[1].Value = accionModificada.Denominacion;
+                    filaSeleccionada.Cells[2].Value = accionModificada.CotizacionActual;
+                    filaSeleccionada.Cells[3].Value = accionModificada.CantidadEmitida;
+                }
+            }
         }
     }
 }
