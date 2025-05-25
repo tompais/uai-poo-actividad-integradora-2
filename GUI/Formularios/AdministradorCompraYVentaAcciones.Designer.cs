@@ -56,10 +56,22 @@
             botonEliminarAccion = new Button();
             botonAgregarAccion = new Button();
             botonComprarAccion = new Button();
-            venderAccion = new Button();
+            botonVenderAccion = new Button();
+            campoNumericoTotalRecaudadoClientesComunes = new NumericUpDown();
+            label1 = new Label();
+            label2 = new Label();
+            campoNumericoTotalRecaudadoClientesPremium1 = new NumericUpDown();
+            campoNumericoTotalRecaudadoClientesPremium2 = new NumericUpDown();
+            label3 = new Label();
+            campoNumericoTotalRecaudadoGeneral = new NumericUpDown();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)grillaInversores).BeginInit();
             ((System.ComponentModel.ISupportInitialize)grillaInversiones).BeginInit();
             ((System.ComponentModel.ISupportInitialize)grillaAcciones).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoClientesComunes).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoClientesPremium1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoClientesPremium2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoGeneral).BeginInit();
             SuspendLayout();
             // 
             // grillaInversores
@@ -157,8 +169,10 @@
             grillaInversiones.Location = new Point(12, 282);
             grillaInversiones.Name = "grillaInversiones";
             grillaInversiones.ReadOnly = true;
+            grillaInversiones.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             grillaInversiones.Size = new Size(646, 150);
             grillaInversiones.TabIndex = 5;
+            grillaInversiones.SelectionChanged += GrillaInversiones_SelectionChanged;
             // 
             // Column1
             // 
@@ -295,21 +309,107 @@
             botonComprarAccion.UseVisualStyleBackColor = true;
             botonComprarAccion.Click += BotonComprarAccion_Click;
             // 
-            // venderAccion
+            // botonVenderAccion
             // 
-            venderAccion.Location = new Point(664, 311);
-            venderAccion.Name = "venderAccion";
-            venderAccion.Size = new Size(75, 23);
-            venderAccion.TabIndex = 13;
-            venderAccion.Text = "Vender";
-            venderAccion.UseVisualStyleBackColor = true;
+            botonVenderAccion.Enabled = false;
+            botonVenderAccion.Location = new Point(664, 311);
+            botonVenderAccion.Name = "botonVenderAccion";
+            botonVenderAccion.Size = new Size(75, 23);
+            botonVenderAccion.TabIndex = 13;
+            botonVenderAccion.Text = "Vender";
+            botonVenderAccion.UseVisualStyleBackColor = true;
+            botonVenderAccion.Click += BotonVenderAccion_Click;
+            // 
+            // campoNumericoTotalRecaudadoClientesComunes
+            // 
+            campoNumericoTotalRecaudadoClientesComunes.DecimalPlaces = 2;
+            campoNumericoTotalRecaudadoClientesComunes.Location = new Point(1166, 230);
+            campoNumericoTotalRecaudadoClientesComunes.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            campoNumericoTotalRecaudadoClientesComunes.Name = "campoNumericoTotalRecaudadoClientesComunes";
+            campoNumericoTotalRecaudadoClientesComunes.ReadOnly = true;
+            campoNumericoTotalRecaudadoClientesComunes.Size = new Size(120, 23);
+            campoNumericoTotalRecaudadoClientesComunes.TabIndex = 14;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(1076, 212);
+            label1.Name = "label1";
+            label1.Size = new Size(210, 15);
+            label1.TabIndex = 15;
+            label1.Text = "Total Recaudado de Clientes Comunes";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(1013, 264);
+            label2.Name = "label2";
+            label2.Size = new Size(273, 15);
+            label2.TabIndex = 16;
+            label2.Text = "Total Recaudado por Clientes Premium (<=20.000)";
+            // 
+            // campoNumericoTotalRecaudadoClientesPremium1
+            // 
+            campoNumericoTotalRecaudadoClientesPremium1.DecimalPlaces = 2;
+            campoNumericoTotalRecaudadoClientesPremium1.Location = new Point(1166, 282);
+            campoNumericoTotalRecaudadoClientesPremium1.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            campoNumericoTotalRecaudadoClientesPremium1.Name = "campoNumericoTotalRecaudadoClientesPremium1";
+            campoNumericoTotalRecaudadoClientesPremium1.ReadOnly = true;
+            campoNumericoTotalRecaudadoClientesPremium1.Size = new Size(120, 23);
+            campoNumericoTotalRecaudadoClientesPremium1.TabIndex = 17;
+            // 
+            // campoNumericoTotalRecaudadoClientesPremium2
+            // 
+            campoNumericoTotalRecaudadoClientesPremium2.DecimalPlaces = 2;
+            campoNumericoTotalRecaudadoClientesPremium2.Location = new Point(1166, 337);
+            campoNumericoTotalRecaudadoClientesPremium2.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            campoNumericoTotalRecaudadoClientesPremium2.Name = "campoNumericoTotalRecaudadoClientesPremium2";
+            campoNumericoTotalRecaudadoClientesPremium2.ReadOnly = true;
+            campoNumericoTotalRecaudadoClientesPremium2.Size = new Size(120, 23);
+            campoNumericoTotalRecaudadoClientesPremium2.TabIndex = 19;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(1021, 319);
+            label3.Name = "label3";
+            label3.Size = new Size(265, 15);
+            label3.TabIndex = 18;
+            label3.Text = "Total Recaudado por Clientes Premium (>20.000)";
+            // 
+            // campoNumericoTotalRecaudadoGeneral
+            // 
+            campoNumericoTotalRecaudadoGeneral.DecimalPlaces = 2;
+            campoNumericoTotalRecaudadoGeneral.Location = new Point(1166, 395);
+            campoNumericoTotalRecaudadoGeneral.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            campoNumericoTotalRecaudadoGeneral.Name = "campoNumericoTotalRecaudadoGeneral";
+            campoNumericoTotalRecaudadoGeneral.ReadOnly = true;
+            campoNumericoTotalRecaudadoGeneral.Size = new Size(120, 23);
+            campoNumericoTotalRecaudadoGeneral.TabIndex = 21;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(1148, 377);
+            label4.Name = "label4";
+            label4.Size = new Size(138, 15);
+            label4.TabIndex = 20;
+            label4.Text = "Total Recaudado General";
             // 
             // AdministradorCompraYVentaAcciones
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1298, 445);
-            Controls.Add(venderAccion);
+            Controls.Add(campoNumericoTotalRecaudadoGeneral);
+            Controls.Add(label4);
+            Controls.Add(campoNumericoTotalRecaudadoClientesPremium2);
+            Controls.Add(label3);
+            Controls.Add(campoNumericoTotalRecaudadoClientesPremium1);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(campoNumericoTotalRecaudadoClientesComunes);
+            Controls.Add(botonVenderAccion);
             Controls.Add(botonComprarAccion);
             Controls.Add(botonModificarAccion);
             Controls.Add(botonEliminarAccion);
@@ -325,9 +425,14 @@
             Controls.Add(grillaInversores);
             Name = "AdministradorCompraYVentaAcciones";
             Text = "Administrador de Compra y Venta de Acciones";
+            Load += AdministradorCompraYVentaAcciones_Load;
             ((System.ComponentModel.ISupportInitialize)grillaInversores).EndInit();
             ((System.ComponentModel.ISupportInitialize)grillaInversiones).EndInit();
             ((System.ComponentModel.ISupportInitialize)grillaAcciones).EndInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoClientesComunes).EndInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoClientesPremium1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoClientesPremium2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)campoNumericoTotalRecaudadoGeneral).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -357,11 +462,19 @@
         private Button botonEliminarAccion;
         private Button botonAgregarAccion;
         private Button botonComprarAccion;
-        private Button venderAccion;
+        private Button botonVenderAccion;
         private DataGridViewTextBoxColumn Legajo;
         private DataGridViewTextBoxColumn Apellido;
         private DataGridViewTextBoxColumn Nombre;
         private DataGridViewTextBoxColumn DNI;
         private DataGridViewTextBoxColumn Tipo;
+        private NumericUpDown campoNumericoTotalRecaudadoClientesComunes;
+        private Label label1;
+        private Label label2;
+        private NumericUpDown campoNumericoTotalRecaudadoClientesPremium1;
+        private NumericUpDown campoNumericoTotalRecaudadoClientesPremium2;
+        private Label label3;
+        private NumericUpDown campoNumericoTotalRecaudadoGeneral;
+        private Label label4;
     }
 }

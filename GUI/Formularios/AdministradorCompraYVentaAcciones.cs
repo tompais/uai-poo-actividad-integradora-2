@@ -9,8 +9,13 @@ namespace uai_poo_actividad_integradora_2
 {
     public partial class AdministradorCompraYVentaAcciones : Form
     {
+        private const decimal LimiteComisionPremium = 20000m;
         private readonly List<Inversor> Inversores = [];
         private readonly List<Accion> Acciones = [];
+        private static decimal TotalRecaudadoClientesComunes = 0;
+        private static decimal TotalRecaudadoClientesPremium1 = 0;
+        private static decimal TotalRecaudadoClientesPremium2 = 0;
+        private static decimal TotalRecaudadoGeneral = 0;
         public AdministradorCompraYVentaAcciones()
         {
             InitializeComponent();
@@ -109,6 +114,7 @@ namespace uai_poo_actividad_integradora_2
         {
             ActualizarEstadoBotonesInversores();
             ActualizarEstadoBotonComprarAccion();
+            ActualizarGrillaInversiones();
         }
 
         private void ActualizarEstadoBotonComprarAccion() => botonComprarAccion.Enabled = HayFilasSeleccionadasEnGrillaInversores() && HayFilasSeleccionadasEnGrillaAcciones();
@@ -270,6 +276,8 @@ namespace uai_poo_actividad_integradora_2
                 var accionSeleccionada = ObtenerAccionSeleccionada();
                 if (inversorSeleccionado != null && accionSeleccionada != null)
                 {
+                    CalcularComision(in inversorSeleccionado, in accionSeleccionada);
+                    ActualizarCamposDeRecaudaciones();
                     ReducirCantidadEmitida(in accionSeleccionada);
                     AsignarInversionAInversor(in inversorSeleccionado, in accionSeleccionada);
                     ModificarAccionEnGrilla();
@@ -277,6 +285,60 @@ namespace uai_poo_actividad_integradora_2
                     MessageBox.Show($"Compra realizada: {inversorSeleccionado.Nombre} {inversorSeleccionado.Apellido} compró {accionSeleccionada.Codigo}", "Compra Realizada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+
+        private void ActualizarCamposDeRecaudaciones()
+        {
+            campoNumericoTotalRecaudadoClientesComunes.Value = TotalRecaudadoClientesComunes;
+            campoNumericoTotalRecaudadoClientesPremium1.Value = TotalRecaudadoClientesPremium1;
+            campoNumericoTotalRecaudadoClientesPremium2.Value = TotalRecaudadoClientesPremium2;
+            campoNumericoTotalRecaudadoGeneral.Value = TotalRecaudadoGeneral;
+        }
+
+        private void CalcularComision(in Inversor inversor, in Accion accion)
+        {
+            if (EsInversorPremium(inversor))
+            {
+                CalcularComisionClientePremium(in accion);
+            }
+            else
+            {
+                CalcularComisionClienteComun(in accion);
+            }
+        }
+
+        private static void CalcularComisionClientePremium(in Accion accion)
+        {
+            var montoOperacion = accion.CotizacionActual;
+            var comision2 = 0m;
+
+            decimal comision1;
+            if (montoOperacion <= LimiteComisionPremium)
+            {
+                comision1 = montoOperacion * 0.01m;
+            }
+            else
+            {
+                comision1 = LimiteComisionPremium * 0.01m;
+                comision2 = (montoOperacion - LimiteComisionPremium) * 0.005m;
+            }
+
+            TotalRecaudadoClientesPremium1 += comision1;
+            TotalRecaudadoClientesPremium2 += comision2;
+            TotalRecaudadoGeneral += comision1 + comision2;
+        }
+
+
+        private static void CalcularComisionClienteComun(in Accion accion)
+        {
+            var comision = accion.CotizacionActual * 0.01m;
+            TotalRecaudadoClientesComunes += comision;
+            TotalRecaudadoGeneral += comision;
+        }
+
+        private static bool EsInversorPremium(Inversor inversorSeleccionado)
+        {
+            return inversorSeleccionado.ObtenerTipo() == TipoInversor.PREMIUM;
         }
 
         private void ActualizarGrillaInversiones(Inversor inversor)
@@ -309,15 +371,74 @@ namespace uai_poo_actividad_integradora_2
             }
         }
 
-        private static void AgregarNuevaInversion(Inversor inversor, Accion accion)
-        {
-            inversor.Inversiones.Add(new Inversion(accion));
-        }
+        private static void AgregarNuevaInversion(Inversor inversor, Accion accion) => inversor.AgregarInversion(accion);
 
         private static Inversion ObtenerInversionPorCodigoDeAccion(Inversor inversorSeleccionado, string codigoAccion) => inversorSeleccionado.Inversiones.First(inversion => inversion.Accion.Codigo == codigoAccion);
 
         private static bool EsInversionExistente(Inversor inversorSeleccionado, string codigoAccion) => inversorSeleccionado.Inversiones.Any(inversion => inversion.Accion.Codigo == codigoAccion);
 
         private static void ReducirCantidadEmitida(in Accion accionSeleccionada) => accionSeleccionada.CantidadEmitida--;
+
+        private void GrillaInversiones_SelectionChanged(object sender, EventArgs e) => botonVenderAccion.Enabled = HayFilasSeleccionadasEnGrillaInversiones();
+
+        private bool HayFilasSeleccionadasEnGrillaInversiones() => grillaInversiones.SelectedRows.Count > 0;
+
+        private void BotonVenderAccion_Click(object sender, EventArgs e)
+        {
+            if (HayFilasSeleccionadasEnGrillaInversiones())
+            {
+                var inversorSeleccionado = ObtenerInversorSeleccionado();
+                if (inversorSeleccionado != null)
+                {
+                    var inversionSeleccionada = ObtenerInversionSeleccionada(in inversorSeleccionado);
+                    if (inversionSeleccionada != null)
+                    {
+                        var accion = inversionSeleccionada.Accion;
+                        AumentarCantidadEmitida(in accion);
+                        ReducirOEliminarInversionDeInversor(in inversorSeleccionado, in inversionSeleccionada);
+                        ActualizarGrillaAcciones();
+                        ActualizarGrillaInversiones(inversorSeleccionado);
+                        MessageBox.Show($"Venta realizada: {inversorSeleccionado.Nombre} {inversorSeleccionado.Apellido} vendió {accion.Codigo}", "Venta Realizada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
+                }
+            }
+        }
+
+        private static void ReducirOEliminarInversionDeInversor(in Inversor inversorSeleccionado, in Inversion inversionSeleccionada)
+        {
+            if (inversionSeleccionada.Cantidad > 1)
+            {
+                ReducirCantidadDeInversion(in inversionSeleccionada);
+            }
+            else
+            {
+                EliminarInversionDeInversor(in inversorSeleccionado, in inversionSeleccionada);
+            }
+        }
+
+        private static void EliminarInversionDeInversor(in Inversor inversorSeleccionado, in Inversion inversionSeleccionada) => inversorSeleccionado.Inversiones.Remove(inversionSeleccionada);
+
+        private static uint ReducirCantidadDeInversion(in Inversion inversionSeleccionada) => inversionSeleccionada.Cantidad--;
+
+        private static void AumentarCantidadEmitida(in Accion accion) => accion.CantidadEmitida++;
+
+        private Inversion? ObtenerInversionSeleccionada(in Inversor inversor)
+        {
+            var codigoAccion = ObtenerCodigoDeFilaSeleccionadaEnGrillaInversiones();
+            return inversor.Inversiones.FirstOrDefault(inversion => inversion.Accion.Codigo == codigoAccion);
+        }
+
+        private string ObtenerCodigoDeFilaSeleccionadaEnGrillaInversiones() => ObtenerFilaSeleccionadaEnGrillaInversiones().Cells[0].Value.ToString()!;
+
+        private DataGridViewRow ObtenerFilaSeleccionadaEnGrillaInversiones() => grillaInversiones.SelectedRows[0];
+
+        private void AdministradorCompraYVentaAcciones_Load(object sender, EventArgs e)
+        {
+            campoNumericoTotalRecaudadoClientesComunes.Controls[0].Hide();
+            campoNumericoTotalRecaudadoClientesPremium1.Controls[0].Hide();
+            campoNumericoTotalRecaudadoClientesPremium2.Controls[0].Hide();
+            campoNumericoTotalRecaudadoGeneral.Controls[0].Hide();
+        }
     }
 }

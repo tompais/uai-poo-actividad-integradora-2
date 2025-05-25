@@ -1,4 +1,5 @@
-﻿using uai_poo_actividad_integradora_2.Clases.Inversiones;
+﻿using uai_poo_actividad_integradora_2.Clases.Acciones;
+using uai_poo_actividad_integradora_2.Clases.Inversiones;
 
 namespace uai_poo_actividad_integradora_2.Clases.Inversores
 {
@@ -22,5 +23,23 @@ namespace uai_poo_actividad_integradora_2.Clases.Inversores
         }
 
         public virtual TipoInversor ObtenerTipo() => TipoInversor.NORMAL;
+
+        public void AgregarInversion(in Accion accion)
+        {
+            var inversion = new Inversion(accion);
+            SuscribirseAEventoDeCambioDeCotización(in inversion);
+            Inversiones.Add(inversion);
+
+        }
+
+        private void SuscribirseAEventoDeCambioDeCotización(in Inversion inversion) => inversion.Accion.CotizacionCambiada += Accion_CotizacionCambiada;
+
+        private void Accion_CotizacionCambiada(object? sender, Accion.CotizacionCambiadaEventArgs e)
+        {
+            if (sender is Accion accion)
+            {
+                MessageBox.Show($"La acción {accion.Codigo} ha cambiado su cotización a {e.NuevaCotizacion}", "Cotización actualizada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
 }

@@ -6,6 +6,8 @@ namespace uai_poo_actividad_integradora_2.Clases.Inversiones
     {
         public readonly Accion Accion = accion;
         public uint Cantidad { get; set; } = 1;
-        public decimal CalcularValorTotalDeLaInversion() => Cantidad * Accion.CotizacionActual;
+
+        public decimal CalcularValorTotalDeLaInversion() => Accion.CotizacionActual * Cantidad;
     }
+
 }
